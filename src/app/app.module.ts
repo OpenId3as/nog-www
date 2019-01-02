@@ -17,6 +17,11 @@ import { LoadingComponent } from './shared/loading/loading.component';
 import { CarouselComponent } from './shared/carousel/carousel.component';
 import { VolunteerComponent } from './volunteer/volunteer.component';
 
+//import { Local } from './utils/service/local.service';
+//import { Session } from './utils/service/session.service';
+//import { UtilsService } from './utils/service/utils.service';
+//import { SharedService } from './utils/service/shared.service';
+
 @NgModule({
   declarations: [
     AppComponent,
@@ -38,7 +43,18 @@ import { VolunteerComponent } from './volunteer/volunteer.component';
   imports: [
     BrowserModule
   ],
-  providers: [],
+
+  providers: [
+    // Local,
+    // Session,
+    // UtilsService,
+    // SharedService,
+    // CountryService,
+    // LocaleService,
+    // WINDOW_PROVIDERS,
+    // HttpClientModule
+  ],
+
   bootstrap: [AppComponent]
 })
 export class AppModule { }
