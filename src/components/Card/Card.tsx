@@ -6,12 +6,12 @@ import Typography from '@material-ui/core/Typography'
 import Box from '@material-ui/core/Box'
 
 import useStyles from './Card.style'
-import i1 from '../../assets/images/dog1.jpg'
 
 interface SimpleCardProps {
   title: string
   subtitle: string
   imageTitle: string
+  image: string
 }
 
 const SimpleCard = (props: SimpleCardProps) => {
@@ -25,7 +25,7 @@ const SimpleCard = (props: SimpleCardProps) => {
         /> */}
         <CardMedia
           className={classes.media}
-          image={i1}
+          image={props.image}
           title={props.imageTitle}
         />
         <CardContent>

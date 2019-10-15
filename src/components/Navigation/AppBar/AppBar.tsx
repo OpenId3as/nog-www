@@ -71,3 +71,5 @@ const ButtonAppBar = () => {
     </div>
   )
 }
+
+export default ButtonAppBar

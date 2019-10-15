@@ -1,74 +1,106 @@
-import React, { ChangeEvent, useState } from 'react'
+import React, { ChangeEvent, useState, useEffect } from 'react'
 import { useMediaQuery } from '@material-ui/core'
 import CssBaseline from '@material-ui/core/CssBaseline'
 import Typography from '@material-ui/core/Typography'
-import Link from '@material-ui/core/Link'
 import Button from '@material-ui/core/Button'
 import Container from '@material-ui/core/Container'
 import ListItem from '@material-ui/core/ListItem';
 import ListItemText from '@material-ui/core/ListItemText';
 
-import Logo from '../../components/Logo/Logo'
-import Tab from '../../components/Navigation/Tabs/Tab/Tab'
-import TabPanel from '../../components/Navigation/Tabs/TabPanel/TabPanel'
-import Toolbar from '../../components/Navigation/Toolbar/Toolbar'
-import Drawer from '../../components/Navigation/Drawer/Drawer'
+import {
+  Logo,
+  Tab,
+  TabPanel,
+  Toolbar,
+  Drawer,
+  Progress,
+} from '../../components'
 
-import Collaborator from '../OpenArea/Collaborator/Collaborator'
-import Contact from '../OpenArea/Contact/Contact'
-import Home from '../OpenArea/Home/Home'
-import HowToHelp from '../OpenArea/HowToHelp/HowToHelp'
-import Volunteer from '../OpenArea/Volunteer/Volunteer'
-import WhoAreWe from '../OpenArea/WhoAreWe/WhoAreWe'
-
+import {
+  Collaborator,
+  Contact,
+  Home,
+  HowToHelp,
+  NotFound,
+  Volunteer,
+  WhoAreWe
+} from '../OpenArea'
 import useStyles from './OpenArea.style'
 
-import logoTest from '../../assets/openId3as.png'
+import {
+  Language as LanguageType,
+  INITIAL_LANGUAGE_STATE as LanguageInitialState,
+  Logo as LogoType,
+  INITIAL_LOGO_STATE as LogoInitialState
+} from '../../nog-api'
+
+import { fetchLanguage, fetchLogo, fetchMenuDetails } from '../../nog-api/'
+
 import brFlag from '../../assets/images/flag-br.png'
 import usaFlag from '../../assets/images/flag-usa.png'
 import spainFlag from '../../assets/images/flag-spain.png'
 
-const MadeWithLove = () => {
-  return (
-    <Typography variant='body2' color='textSecondary' align='center'>
-      {'Built with love by the '}
-      <Link color='inherit' href='https://material-ui.com/'>
-        Material-UI
-      </Link>
-      {' team.'}
-    </Typography>
-  )
+enum LanguageEnum {
+  Portuguese = 'pt-br',
+  English = 'en-us',
+  Spanish = 'sp',
 }
-
-const tabs = [
-  'Home',
-  'Quem Somos',
-  'Como Ajudar',
-  'Contato',
-  'Colaboradores',
-  'Voluntários',
-]
-
-type Language = 'pt-br' | 'en-us' | 'sp'
 
 const OpenArea = () => {
   const classes = useStyles()
   const isMobile = useMediaQuery('(max-width: 959px)')
-  // document.title = 'test'
 
+  const institution = !!window.location.pathname.split('/')[1] ? window.location.pathname.split('/')[1] : '-'
   const [tabValue, setTabValue] = useState(0)
-  const [language, setLanguage] = useState<Language>('pt-br')
+  const [selectedLanguage, setSelectedLanguage] = useState<LanguageEnum>(LanguageEnum.Portuguese)
+  const [language, setLanguage] = useState<LanguageType>(LanguageInitialState)
+  const [logo, setLogo] = useState<LogoType>(LogoInitialState)
+  const [menu, setMenu] = useState<string[] | undefined>(undefined)
+  const [currentMenu, setCurrentMenu] = useState<string>('')
+  const [error, setError] = useState<boolean>(false)
+
+  useEffect(() => {
+    fetchMenuDetails(selectedLanguage, institution)
+      .then(setMenu)
+      .catch(_ => !menu && setError(true))
+    fetchLanguage(selectedLanguage)
+      .then(setLanguage)
+    fetchLogo(institution)
+      .then(setLogo)
+  }, [selectedLanguage])
+
+  useEffect(() => {
+    if (language.id !== 0) {
+      document.title = language.data.header.title
+    }
+  }, [language])
+
+  useEffect(() => {
+    if (!!menu) {
+      setCurrentMenu(!!menu ? menu[0] : '')
+    }
+  }, [menu])
 
   const handleTabChange = (event: ChangeEvent<{}>, newValue: number) => {
     setTabValue(newValue)
+    setCurrentMenu(!!menu ? menu[newValue] : '')
   }
 
   const handleDrawerMenuChange = (newValue: number) => {
     setTabValue(newValue)
+    setCurrentMenu(!!menu ? menu[newValue] : '')
   }
 
-  const handleLanguageChange = (language: Language) => {
-    setLanguage(language)
+  const handleLanguageChange = (language: LanguageEnum) => {
+    setSelectedLanguage(language)
+  }
+
+  if (error) {
+    return <NotFound />
+  }
+
+  if (!menu) {
+    return <Progress />
   }
 
   return (
@@ -77,80 +109,84 @@ const OpenArea = () => {
       <Container maxWidth='lg'>
         <Toolbar divider justify="space-between">
           <div className={classes.toolbarLogo}>
-            <Logo src={logoTest} onClick={() => setTabValue(0)} />
+            <Logo src={logo.data.image} onClick={() => setTabValue(0)} />
           </div>
           <div className={classes.toolbarButtons}>
             <div className={classes.loginButton}>
               <Button variant='outlined' size='small'>
-                Sign up / Login
+                {language.data.header.loginButton}
               </Button>
             </div>
             <div className={classes.languageAndHamburgerSection}>
               {isMobile && (
-                <Drawer onClick={handleDrawerMenuChange} items={tabs} value={tabValue}>
+                <Drawer onClick={handleDrawerMenuChange} items={menu} value={tabValue}>
                   <ListItem button key={'list-login'}>
-                    <ListItemText primary={'Sign up / Login'} />
+                    <ListItemText primary={language.data.header.loginButton} />
                   </ListItem>
                 </Drawer>
               )}
               <div className={classes.languageSection}>
-                {language !== 'pt-br' && (
+                {selectedLanguage !== LanguageEnum.Portuguese && (
                   <div className={classes.flag}>
-                    <img style={{ cursor: 'pointer' }} alt="br" onClick={() => handleLanguageChange('pt-br')} src={brFlag} />
+                    <img style={{ cursor: 'pointer' }} alt="br" onClick={() => handleLanguageChange(LanguageEnum.Portuguese)} src={brFlag} />
                   </div>
                 )}
-                {language !== 'sp' && (
+                {selectedLanguage !== LanguageEnum.Spanish && (
                   <div className={classes.flag}>
-                    <img style={{ cursor: 'pointer' }} alt="sp" onClick={() => handleLanguageChange('sp')} src={spainFlag} />
+                    <img style={{ cursor: 'pointer' }} alt="sp" onClick={() => handleLanguageChange(LanguageEnum.Spanish)} src={spainFlag} />
                   </div>
                 )}
-                {language !== 'en-us' && (
+                {selectedLanguage !== LanguageEnum.English && (
                   <div className={classes.flag}>
-                    <img style={{ cursor: 'pointer' }} alt="usa" onClick={() => handleLanguageChange('en-us')} src={usaFlag} />
+                    <img style={{ cursor: 'pointer' }} alt="usa" onClick={() => handleLanguageChange(LanguageEnum.English)} src={usaFlag} />
                   </div>
                 )}
               </div>
             </div>
           </div>
         </Toolbar>
+        {isMobile && (
+          <div className={classes.mobileCurrentMenu}>
+            {currentMenu}
+          </div>
+        )}
         {!isMobile && (
-          <Tab onChange={handleTabChange} tabs={tabs} value={tabValue} />
+          <Tab onChange={handleTabChange} tabs={menu} value={tabValue} />
         )}
         <main>
           <TabPanel value={tabValue} index={0}>
-            <Home />
+            <Home institution={institution} language={selectedLanguage} />
           </TabPanel>
           <TabPanel value={tabValue} index={1}>
-            <WhoAreWe />
+            <WhoAreWe institution={institution} language={selectedLanguage} />
           </TabPanel>
           <TabPanel value={tabValue} index={2}>
-            <HowToHelp />
+            <HowToHelp institution={institution} language={selectedLanguage} />
           </TabPanel>
           <TabPanel value={tabValue} index={3}>
-            <Contact />
+            <Contact institution={institution} language={selectedLanguage} />
           </TabPanel>
           <TabPanel value={tabValue} index={4}>
-            <Collaborator />
+            <Collaborator institution={institution} language={selectedLanguage} />
           </TabPanel>
           <TabPanel value={tabValue} index={5}>
-            <Volunteer />
+            <Volunteer institution={institution} language={selectedLanguage} />
           </TabPanel>
         </main>
       </Container>
       <footer className={classes.footer}>
         <Container maxWidth='lg'>
-          <Typography variant='h6' align='center' gutterBottom>
-            Footer
-          </Typography>
           <Typography
             variant='subtitle1'
             align='center'
             color='textSecondary'
             component='p'
           >
-            Something here to give the footer a purpose!
+            {language.data.footer.reservedRights}
           </Typography>
-          <MadeWithLove />
+          <Typography variant='body2' color='textSecondary' align='center'>
+            {language.data.footer.providedFor}
+          </Typography>
         </Container>
       </footer>
     </div>

@@ -1,4 +1,4 @@
-import { makeStyles } from '@material-ui/core/styles'
+import { makeStyles, Theme } from '@material-ui/core/styles'
 
 const useStyles = makeStyles(() => ({
   container: {
@@ -6,6 +6,7 @@ const useStyles = makeStyles(() => ({
   },
   gridContainter: {
     padding: '0px 10px',
+    width: '100%',
   },
 }))
 

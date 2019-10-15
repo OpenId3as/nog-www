@@ -1,0 +1,7 @@
+export * from './Collaborator'
+export * from './Contact'
+export * from './Home'
+export * from './HowToHelp'
+export * from './NotFound'
+export * from './Volunteer'
+export * from './WhoAreWe'

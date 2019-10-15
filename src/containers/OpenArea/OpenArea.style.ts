@@ -43,6 +43,12 @@ const useStyles = makeStyles((theme: Theme) => ({
       width: '100%',
     },
   },
+  mobileCurrentMenu: {
+    display: 'flex',
+    justifyContent: 'center',
+    padding: 10,
+    fontSize: 20,
+  },
   footer: {
     backgroundColor: theme.palette.background.paper,
     //marginTop: theme.spacing(8),
