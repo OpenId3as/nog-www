@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react'
 import Grid from '@material-ui/core/Grid'
+import ReactHtmlParser from 'react-html-parser';
 
 import ExpansionPanel, {
   ExpansionItem,
@@ -30,7 +31,7 @@ const HowToHelp = (props: HowToHelpProps) => {
   return (
     <Grid container className={classes.container}>
       <Grid item md={6} sm={12} className={classes.gridContainter}>
-        {howToHelp.description}
+        {ReactHtmlParser(howToHelp.description)}
       </Grid>
       <Grid item md={6} sm={12} className={classes.gridContainter}>
         {howToHelp.language.length > 0 && (

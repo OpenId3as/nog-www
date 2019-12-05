@@ -16,15 +16,7 @@ import {
   Progress,
 } from '../../components'
 
-import {
-  Collaborator,
-  Contact,
-  Home,
-  HowToHelp,
-  NotFound,
-  Volunteer,
-  WhoAreWe
-} from '../OpenArea'
+import { Content, NotFound } from '../OpenArea'
 import useStyles from './OpenArea.style'
 
 import {
@@ -109,7 +101,10 @@ const OpenArea = () => {
       <Container maxWidth='lg'>
         <Toolbar divider justify="space-between">
           <div className={classes.toolbarLogo}>
-            <Logo src={logo.data.image} onClick={() => setTabValue(0)} />
+            <Logo src={logo.data.image} onClick={() => {
+              setTabValue(0)
+              setCurrentMenu('')
+            }} />
           </div>
           <div className={classes.toolbarButtons}>
             <div className={classes.loginButton}>
@@ -154,24 +149,7 @@ const OpenArea = () => {
           <Tab onChange={handleTabChange} tabs={menu} value={tabValue} />
         )}
         <main>
-          <TabPanel value={tabValue} index={0}>
-            <Home institution={institution} language={selectedLanguage} />
-          </TabPanel>
-          <TabPanel value={tabValue} index={1}>
-            <WhoAreWe institution={institution} language={selectedLanguage} />
-          </TabPanel>
-          <TabPanel value={tabValue} index={2}>
-            <HowToHelp institution={institution} language={selectedLanguage} />
-          </TabPanel>
-          <TabPanel value={tabValue} index={3}>
-            <Contact institution={institution} language={selectedLanguage} />
-          </TabPanel>
-          <TabPanel value={tabValue} index={4}>
-            <Collaborator institution={institution} language={selectedLanguage} />
-          </TabPanel>
-          <TabPanel value={tabValue} index={5}>
-            <Volunteer institution={institution} language={selectedLanguage} />
-          </TabPanel>
+          <Content institution={institution} selectedLanguage={selectedLanguage} tabValue={tabValue} />
         </main>
       </Container>
       <footer className={classes.footer}>

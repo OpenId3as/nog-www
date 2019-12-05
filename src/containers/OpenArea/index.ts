@@ -1,3 +1,4 @@
+export * from './Content'
 export * from './Collaborator'
 export * from './Contact'
 export * from './Home'

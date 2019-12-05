@@ -24,7 +24,6 @@ const Contact = (props: ContactProps) => {
       .then(setContact)
   }, [])
 
-  console.log(contact)
   return (
     <Grid container className={classes.container}>
       <Grid item xs={12} className={classes.gridContainter}>
